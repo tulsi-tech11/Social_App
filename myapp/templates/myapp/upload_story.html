@@ -1,0 +1,126 @@
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Story — Velora</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'css/userpanel.css' %}">
+    <style>
+        .create-story-container {
+            max-width: 500px;
+            margin: 50px auto;
+            background: #fff;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            text-align: center;
+        }
+        .preview-box {
+            width: 100%;
+            height: 400px;
+            background: #f8f9fa;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            border: 2px dashed #ddd;
+            position: relative;
+        }
+        .preview-box img, .preview-box video {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+        .file-label {
+            background: #0095f6;
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+        .form-group {
+            text-align: left;
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+        .share-btn {
+            width: 100%;
+            background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+            color: #fff;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        #music-section {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="create-story-container">
+        <h2>Create Story</h2>
+        <p style="color:#888; margin-bottom: 20px;">Share a moment with your followers</p>
+        
+        <form action="{% url 'upload_story' %}" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            
+            <div class="preview-box" id="previewBox">
+                <i class="fa-solid fa-clapperboard" style="font-size: 3rem; color: #ccc;"></i>
+            </div>
+
+            <label for="mediaInput" class="file-label">Select Image or Video</label>
+            <input type="file" id="mediaInput" name="media" hidden required onchange="handlePreview(this)">
+
+            <div id="music-section" class="form-group">
+                <label>Add Music (Optional)</label>
+                <input type="file" name="music" accept="audio/*">
+            </div>
+
+            <button type="submit" class="share-btn">Share Story</button>
+            <a href="{% url 'home' %}" style="display:block; margin-top:15px; color:#888; text-decoration:none;">Cancel</a>
+        </form>
+    </div>
+
+    <script>
+        function handlePreview(input) {
+            const file = input.files[0];
+            const box = document.getElementById('previewBox');
+            const musicSection = document.getElementById('music-section');
+            
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    if (file.type.startsWith('video/')) {
+                        box.innerHTML = `<video src="${e.target.result}" autoplay muted loop></video>`;
+                        musicSection.style.display = 'none';
+                    } else {
+                        box.innerHTML = `<img src="${e.target.result}">`;
+                        musicSection.style.display = 'block'; // Show music option for images
+                    }
+                }
+                reader.readAsDataURL(file);
+            }
+        }
+    </script>
+</body>
+</html>

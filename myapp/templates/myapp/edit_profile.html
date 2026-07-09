@@ -1,0 +1,189 @@
+{% load static %}
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Social — Edit Profile</title>
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Outfit:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="{% static 'css/userpanel.css' %}">
+</head>
+
+<body>
+
+  <!-- ✅ SIDEBAR -->
+  <nav class="sidebar">
+    <div class="logo">soci<span>al</span></div>
+
+    <div class="nav-links">
+      <a href="{% url 'home' %}" class="nav-item"><i class="fa-solid fa-house"></i> Home</a>
+      <a href="{% url 'search' %}" class="nav-item"><i class="fa-solid fa-magnifying-glass"></i> Search</a>
+      <a href="{% url 'reels' %}" class="nav-item"><i class="fa-regular fa-square-caret-right"></i> Reels</a>
+      <a href="{% url 'messages' %}" class="nav-item"><i class="fa-solid fa-paper-plane"></i> Messages</a>
+      <a href="{% url 'notification' %}" class="nav-item"><i class="fa-solid fa-bell"></i> Notifications</a>
+      <div class="nav-item-wrapper">
+        <a href="javascript:void(0)" class="nav-item" onclick="var m=document.getElementById('create-submenu');m.style.display=m.style.display==='flex'?'none':'flex';"><i class="fa-regular fa-square-plus"></i> Create</a>
+        <div id="create-submenu" class="create-submenu" style="display:none;">
+          <a href="{% url 'create' %}" class="create-submenu-option"><i class="fa-regular fa-image"></i> Create Post</a>
+          <a href="{% url 'create_reel' %}" class="create-submenu-option"><i class="fa-regular fa-square-caret-right"></i> Create Reel</a>
+        </div>
+      </div>
+      <a href="{% url 'profile' %}" class="sidebar-profile-mini">
+        <span class="nav-icon">
+          {% if uid.profile_pic %}
+          <img src="{{uid.profile_pic.url}}" alt="Profile">
+          {% else %}
+          <img src="https://i.pravatar.cc/80?img=47" alt="Profile">
+          {% endif %}
+        </span>
+        <span class="nav-label">Profile</span>
+      </a>
+    </div>
+    <div class="sidebar-divider"></div>
+    <div class="nav-bottom">
+      <a href="{% url 'settings' %}" class="nav-item"><i class="fa-solid fa-gear"></i> Settings</a>
+      <a href="{% url 'logout' %}" class="nav-item logout-btn">
+        <i class="fa-solid fa-right-from-bracket"></i> Logout
+      </a>
+    </div>
+  </nav>
+
+  <!-- ✅ MAIN WRAPPER -->
+  <div class="pages-wrapper">
+
+    <div class="page page-full" style="display:flex; justify-content:center; width:100%;">
+
+      <div class="page-content narrow" style="margin:0 auto;">
+
+        <!-- FORM -->
+        <form method="post" enctype="multipart/form-data" action="{% url 'edit_profile' %}">
+          {% csrf_token %}
+
+          {% if e_msg %}
+          <div class="alert alert-danger" style="color:var(--accent2); background:rgba(192, 54, 78, 0.1); padding:10px; border-radius:5px; margin-bottom:15px; text-align:center;">
+            {{e_msg}}
+          </div>
+          {% endif %}
+
+          <div class="page-header-row">
+            <a href="" class="back-btn"><i class="fa-solid fa-arrow-left"></i></a>
+            <div class="page-header" style="margin-bottom:0">
+              <i class="fa-solid fa-pen"></i> Edit Profile
+            </div>
+          </div>
+
+          <div class="edit-profile-card">
+
+            <!-- IMAGE -->
+            <div class="edit-av-section">
+              <div class="edit-av-wrap">
+                {% if uid.profile_pic %}
+                <img src="{{uid.profile_pic.url}}" class="edit-av" alt="{{uid.username}}">
+                {% else %}
+                <img src="https://i.pravatar.cc/80?img=47" class="edit-av" alt="{{uid.username}}">
+                {% endif %}
+
+                <label class="edit-av-btn">
+                  <i class="fa-solid fa-camera"></i>
+                  <input type="file" style="display:none" name="profile_pic">
+                </label>
+              </div>
+
+              <div class="edit-av-info">
+                <div class="edit-av-name">{{uid.username}}</div>
+              </div>
+            </div>
+
+            <div class="edit-divider"></div>
+
+            <!-- FORM -->
+            <div class="edit-form">
+
+              <div class="edit-form-row">
+                <div class="form-group">
+                  <label class="form-label">Full Name</label>
+                  <input class="form-input" value="{{uid.fullname}}" name="fullname" required>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">Username</label>
+                  <div class="form-input-icon">
+                    <span class="input-prefix">@</span>
+                    <input class="form-input prefix-input" value="{{uid.username}}" name="username" required>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Bio</label>
+                <input class="form-input" value="{{uid.bio}}" name="bio">
+              </div>
+
+              <div class="edit-form-row">
+                <div class="form-group">
+                  <label class="form-label">Link</label>
+                  <input class="form-input" value="{{uid.link}}" name="link">
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">Description</label>
+                  <input class="form-input" value="{{uid.description}}" name="description">
+                </div>
+              </div>
+
+              <!-- BUTTON -->
+              <div class="edit-form-actions">
+                <a href="" class="cancel-btn">Cancel</a>
+                <button type="submit" class="publish-btn">
+                  <i class="fa-solid fa-check"></i> Save Changes
+                </button>
+              </div>
+
+            </div>
+          </div>
+
+        </form>
+
+      </div>
+    </div>
+  </div>
+
+
+<script>
+  // Fetch dynamic badge counts
+  document.addEventListener('DOMContentLoaded', () => {
+    fetch('/api/unread-counts/', { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+      .then(res => res.json())
+      .then(data => {
+        const msgBadge = document.getElementById('msg-badge');
+        const notifBadge = document.getElementById('notif-badge');
+        
+        if (msgBadge) {
+          if (data.messages > 0) {
+            msgBadge.textContent = data.messages;
+            msgBadge.style.display = 'flex';
+          } else {
+            msgBadge.style.display = 'none';
+          }
+        }
+        
+        if (notifBadge) {
+          if (data.notifications > 0) {
+            notifBadge.textContent = data.notifications;
+            notifBadge.style.display = 'flex';
+          } else {
+            notifBadge.style.display = 'none';
+          }
+        }
+      })
+      .catch(err => console.error('Error fetching badge counts:', err));
+  });
+</script>
+</body>
+
+
+</html>

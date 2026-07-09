@@ -1,0 +1,344 @@
+{% load static %}
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>social — Home</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Outfit:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="{% static 'css/userpanel.css' %}">
+  <link rel="stylesheet" href="{% static 'css/comments.css' %}">
+</head>
+
+<body>
+
+  <!-- ══ LEFT SIDEBAR ══════════════════════════════ -->
+  <nav class="sidebar">
+    <div class="logo">so<span>cial</span></div>
+    <div class="nav-links">
+      <a href="{% url 'home' %}" class="nav-item active"><span class="nav-icon"><i class="fa-solid fa-house"></i></span><span
+          class="nav-label">Home</span></a>
+      <a href="{% url 'search' %}" class="nav-item"><span class="nav-icon"><i
+            class="fa-solid fa-magnifying-glass"></i></span><span class="nav-label">Search</span></a>
+      <a href="{% url 'reels' %}" class="nav-item"><span class="nav-icon"><i
+            class="fa-regular fa-square-caret-right"></i></span><span class="nav-label">Reels</span></a>
+      <a href="{% url 'messages' %}" class="nav-item has-badge"><span class="nav-icon"><i
+            class="fa-solid fa-paper-plane"></i></span><span class="nav-label">Messages</span><span
+          class="badge" id="msg-badge" style="display:none;"></span></a>
+      <a href="{% url 'notification' %}" class="nav-item has-badge"><span class="nav-icon"><i
+            class="fa-solid fa-bell"></i></span><span class="nav-label">Notifications</span><span
+          class="badge red" id="notif-badge" style="display:none;"></span></a>
+      <div class="nav-item-wrapper">
+        <a href="javascript:void(0)" class="nav-item"
+          onclick="var m=document.getElementById('create-submenu');m.style.display=m.style.display==='flex'?'none':'flex';"><span
+            class="nav-icon"><i class="fa-regular fa-square-plus"></i></span><span class="nav-label">Create</span></a>
+        <div id="create-submenu" class="create-submenu" style="display:none;">
+          <a href="{% url 'create' %}" class="create-submenu-option"><span class="nav-icon"><i
+                class="fa-regular fa-image"></i></span><span class="nav-label">Create Post</span></a>
+          <a href="{% url 'create_reel' %}" class="create-submenu-option"><span class="nav-icon"><i
+                class="fa-regular fa-square-caret-right"></i></span><span class="nav-label">Create Reel</span></a>
+        </div>
+      </div>
+      <a href="{% url 'profile' %}" class="sidebar-profile-mini">
+        <span class="nav-icon">
+          {% if uid.profile_pic %}
+          <img src="{{uid.profile_pic.url}}" alt="Profile">
+          {% else %}
+          <img src="https://i.pravatar.cc/80?img=47" alt="Profile">
+          {% endif %}
+        </span>
+        <span class="nav-label">Profile</span>
+      </a>
+    </div>
+    <div class="sidebar-divider"></div>
+    <div class="nav-bottom">
+      <a href="{% url 'settings' %}" class="nav-item"><span class="nav-icon"><i
+            class="fa-solid fa-gear"></i></span><span class="nav-label">Settings</span></a>
+      <a href="{% url 'logout' %}" class="nav-item logout-btn"><span class="nav-icon"><i
+            class="fa-solid fa-right-from-bracket"></i></span><span class="nav-label">Logout</span></a>
+    </div>
+  </nav>
+
+  <!-- ══ ALL PAGES ══════════════════════════════════ -->
+  <div class="pages-wrapper">
+
+    <!-- ── HOME ─────────────────────────────────── -->
+    <div id="home" class="page page-with-panel" style="display:flex;">
+      
+      <main class="feed-area">
+        <div class="stories-row">
+          <div class="story-pill your-story">
+            <div class="story-av">
+              {% if uid.profile_pic %}
+              <img src="{{uid.profile_pic.url}}">
+              {% else %}
+              <img src="https://i.pravatar.cc/80?img=47">
+              {% endif %}
+              <span class="add-icon">+</span>
+            </div>
+            <span>Your Story</span>
+          </div>
+          <div class="story-pill">
+            <div class="story-av ring"><img src="https://i.pravatar.cc/80?img=12"></div><span>zara.k</span>
+          </div>
+          <div class="story-pill">
+            <div class="story-av ring"><img src="https://i.pravatar.cc/80?img=33"></div><span>leo.w</span>
+          </div>
+          <div class="story-pill">
+            <div class="story-av ring seen"><img src="https://i.pravatar.cc/80?img=5"></div><span>nora.f</span>
+          </div>
+          <div class="story-pill">
+            <div class="story-av ring"><img src="https://i.pravatar.cc/80?img=25"></div><span>eli.r</span>
+          </div>
+          <div class="story-pill">
+            <div class="story-av ring seen"><img src="https://i.pravatar.cc/80?img=44"></div><span>sofie</span>
+          </div>
+        </div>
+
+        {% for post in post_all %}
+        <article class="post-card">
+          <div class="post-head">
+            <div class="post-av">
+              {% if post.user.profile_pic %}
+              <img src="{{post.user.profile_pic.url}}">
+              {% else %}
+              <img src="https://i.pravatar.cc/80?img=47">
+              {% endif %}
+            </div>
+            <div class="post-info">
+              <div class="post-name">{{post.user.username}} <i class="fa-solid fa-circle-check verified"></i></div>
+              <div class="post-loc"><i class="fa-solid fa-location-dot"></i>{{post.location|default:""}}</div>
+            </div><button class="more-btn"><i class="fa-solid fa-ellipsis"></i></button>
+          </div>
+          <div class="post-img-box">
+            {% if post.is_video %}
+            <video src="{{post.image.url}}" class="post-img" autoplay loop muted playsinline></video>
+            {% else %}
+            <img src="{{post.image.url}}" class="post-img">
+            {% endif %}
+            <div class="img-overlay"></div>
+          </div>
+          
+          <div class="post-foot">
+            <div class="actions-row">
+              <div class="left-actions">
+                <!-- LIKE BUTTON -->
+                <a href="{% url 'like_dislike' pk=post.id %}"
+                  class="act-btn like-btn {% if post.is_liked %}liked{% endif %}">
+                  {% if post.is_liked %}
+                  <i class="fa-solid fa-heart" style="color: #ff3b5c;"></i>
+                  {% else %}
+                  <i class="fa-regular fa-heart"></i>
+                  {% endif %}
+                </a>
+
+                <!-- COMMENT BUTTON -->
+                <button type="button" class="act-btn comment-trigger" 
+                  onclick="openPostModal('{{post.id}}', '{{post.image.url}}', '{{post.user.username}}', '{{post.user.profile_pic.url|default:''}}', '{{post.caption|escapejs}}')">
+                  <i class="fa-regular fa-comment"></i>
+                  <span class="comment-icon-count" id="comment-icon-count-{{post.id}}">{% if post.comment_count > 0 %}{{post.comment_count}}{% endif %}</span>
+                </button>
+
+                <!-- SHARE BUTTON -->
+                <button type="button" class="act-btn"><i class="fa-regular fa-paper-plane"></i></button>
+              </div>
+
+              <!-- SAVE BUTTON -->
+              <button type="button" class="act-btn save-btn"><i class="fa-regular fa-bookmark"></i></button>
+            </div>
+
+            <div class="likes-count">{{post.like_post.count}} likes</div>
+            <div class="caption">
+              <strong>{{post.user.username}}</strong> {{post.caption}}
+            </div>
+            <div class="time-stamp">{{post.whenpublished}}</div>
+          </div>
+        </article>
+        {% endfor %}
+      </main>
+
+      <!-- RIGHT PANEL -->
+      <aside class="right-panel">
+        <div class="my-profile-card">
+          <a href="{% url 'profile' %}" style="text-decoration: none; display:flex; align-items:center; gap: 12px;">
+            <div class="my-av-wrap">
+              {% if uid.profile_pic %}
+              <img src="{{uid.profile_pic.url}}" class="my-av">
+              {% else %}
+              <img src="https://i.pravatar.cc/80?img=47" class="my-av">
+              {% endif %}
+            </div>
+            <div class="my-details">
+              <div class="my-name">{{uid.username}}</div>
+              <div class="my-handle">{{uid.fullname}}</div>
+            </div>
+          </a>
+          <a href="{% url 'logout' %}" class="switch-btn">logout</a>
+        </div>
+        <div class="panel-divider"></div>
+        <div class="suggest-head"><span>Suggested for you</span><a href="{% url 'following' %}" class="see-all-link">See All</a></div>
+        <div class="suggest-list">
+          {% for sug in suggestions %}
+          <div class="suggest-item">
+            <div class="sug-av">
+              {% if sug.profile_pic %}
+              <img src="{{ sug.profile_pic.url }}">
+              {% else %}
+              <img src="https://i.pravatar.cc/80?img=47">
+              {% endif %}
+            </div>
+            <div class="sug-info">
+              <div class="sug-name">{{ sug.username }}</div>
+              <div class="sug-note">{{ sug.fullname }}</div>
+            </div><a href="{% url 'follow_unfollow' sug.id %}" class="follow-btn" style="text-decoration: none; text-align: center;">Follow</a>
+          </div>
+          {% endfor %}
+        </div>
+        <div class="panel-divider"></div>
+        <div class="suggest-head"><span>Trending Tags</span></div>
+        <div class="tags-cloud">
+          <span class="trend-tag active">#wanderlust</span><span class="trend-tag">#goldenhour</span>
+          <span class="trend-tag">#streetphoto</span><span class="trend-tag">#minimalism</span>
+          <span class="trend-tag">#foodie</span><span class="trend-tag">#citylife</span>
+        </div>
+        <div class="panel-footer"><a href="#">About</a> · <a href="#">Help</a> · <a href="#">Privacy</a>
+          <p>© 2026 Velora</p>
+        </div>
+      </aside>
+
+    </div><!-- /page -->
+  </div><!-- /pages-wrapper -->
+
+  <!-- POST MODAL (INSTAGRAM STYLE) -->
+  <div id="post-modal" class="post-modal">
+    <div class="post-modal-content">
+      <span class="close-post-modal" onclick="closePostModal()">&times;</span>
+      <div class="post-modal-container">
+        <div class="modal-left" id="modal-img-side"></div>
+        <div class="modal-right">
+          <div class="modal-right-header">
+            <img src="" id="modal-user-av" class="modal-user-av">
+            <span id="modal-username" class="modal-username"></span>
+          </div>
+          <div class="modal-right-body">
+            <div class="modal-caption" id="modal-post-caption"></div>
+            <div class="modal-comments-list" id="modal-comments-list"></div>
+          </div>
+          <div class="modal-right-footer">
+            <form id="modal-comment-form" class="comment-form">
+              {% csrf_token %}
+              <input type="text" name="comment" placeholder="Add a comment..." required class="comment-input">
+              <button type="submit" class="comment-post-btn">Post</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function openPostModal(postId, imgUrl, username, userPic, caption) {
+      const modal = document.getElementById('post-modal');
+      const imgSide = document.getElementById('modal-img-side');
+      const commentsList = document.getElementById('modal-comments-list');
+      const form = document.getElementById('modal-comment-form');
+      
+      document.getElementById('modal-user-av').src = userPic || 'https://i.pravatar.cc/80?img=47';
+      document.getElementById('modal-username').textContent = username;
+      document.getElementById('modal-post-caption').innerHTML = `<strong>${username}</strong> ${caption}`;
+
+      if (imgUrl.match(/\.(mp4|webm|ogg|mov)$/i)) {
+        imgSide.innerHTML = `<video src="${imgUrl}" autoplay loop muted controls></video>`;
+      } else {
+        imgSide.innerHTML = `<img src="${imgUrl}">`;
+      }
+
+      modal.style.display = 'flex';
+      commentsList.innerHTML = '<div class="side-loader">Loading comments...</div>';
+      form.action = `/add_comment/${postId}/`;
+
+      fetch(`/get_comments/${postId}/`, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+      .then(res => res.json())
+      .then(data => {
+        if (data.status === 'success') {
+          commentsList.innerHTML = '';
+          if (data.comments.length === 0) {
+            commentsList.innerHTML = '<div class="no-comments-side">No comments yet.</div>';
+          } else {
+            data.comments.forEach(c => {
+              const item = document.createElement('div');
+              item.className = 'modal-comment-item';
+              item.innerHTML = `
+                <img src="${c.profile_pic}" class="modal-comment-av">
+                <div class="modal-comment-body">
+                  <strong>${c.username}</strong>
+                  <p>${c.text}</p>
+                  <span>${c.created_at}</span>
+                </div>`;
+              commentsList.appendChild(item);
+            });
+          }
+        }
+      });
+    }
+
+    function closePostModal() {
+      document.getElementById('post-modal').style.display = 'none';
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      // Like logic
+      document.querySelectorAll('.like-btn').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+          e.preventDefault();
+          const self = this;
+          fetch(self.href, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+          .then(res => res.json())
+          .then(data => {
+            if (data.status === 'success') {
+              if (data.liked) {
+                self.classList.add('liked');
+                self.innerHTML = '<i class="fa-solid fa-heart" style="color:#ff3b5c;"></i>';
+              } else {
+                self.classList.remove('liked');
+                self.innerHTML = '<i class="fa-regular fa-heart"></i>';
+              }
+              self.closest('.post-foot').querySelector('.likes-count').textContent = data.like_count + ' likes';
+            }
+          });
+        });
+      });
+
+      // Comment form
+      const modalForm = document.getElementById('modal-comment-form');
+      modalForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        const self = this;
+        const formData = new FormData(self);
+        fetch(self.action, { method: 'POST', body: formData, headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+        .then(res => res.json())
+        .then(data => {
+          if (data.status === 'success') {
+            self.reset();
+            const postId = self.action.split('/').filter(Boolean).pop();
+            const countEl = document.getElementById(`comment-icon-count-${postId}`);
+            if(countEl) countEl.textContent = data.comment_count;
+            openPostModal(postId, document.getElementById('modal-img-side').querySelector('img, video').src, document.getElementById('modal-username').textContent, document.getElementById('modal-user-av').src, document.getElementById('modal-post-caption').textContent.replace(document.getElementById('modal-username').textContent, '').trim());
+          }
+        });
+      });
+
+      // Badges
+      fetch('/api/unread-counts/', { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+      .then(res => res.json())
+      .then(data => {
+        if (data.messages > 0) { document.getElementById('msg-badge').textContent = data.messages; document.getElementById('msg-badge').style.display = 'flex'; }
+        if (data.notifications > 0) { document.getElementById('notif-badge').textContent = data.notifications; document.getElementById('notif-badge').style.display = 'flex'; }
+      });
+    });
+  </script>
+</body>
+</html>

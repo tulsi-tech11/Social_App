@@ -1,0 +1,137 @@
+{% load static %}
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Velora — Following</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="{% static 'css/userpanel.css' %}">
+  <link rel="stylesheet" href="{% static 'css/following.css' %}">
+</head>
+<body>
+
+  <!-- ══ LEFT SIDEBAR ══════════════════════════════ -->
+  <nav class="sidebar">
+    <div class="logo">vel<span>ora</span></div>
+    <div class="nav-links">
+      <a href="{% url 'home' %}" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-house"></i></span><span class="nav-label">Home</span></a>
+      <a href="{% url 'search' %}" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-magnifying-glass"></i></span><span class="nav-label">Search</span></a>
+      <a href="{% url 'reels' %}" class="nav-item"><span class="nav-icon"><i class="fa-regular fa-square-caret-right"></i></span><span class="nav-label">Reels</span></a>
+      <a href="{% url 'messages' %}" class="nav-item has-badge"><span class="nav-icon"><i class="fa-solid fa-paper-plane"></i></span><span class="nav-label">Messages</span><span class="badge" id="msg-badge" style="display:none;"></span></a>
+      <a href="{% url 'notification' %}" class="nav-item has-badge"><span class="nav-icon"><i class="fa-solid fa-bell"></i></span><span class="nav-label">Notifications</span><span class="badge red" id="notif-badge" style="display:none;"></span></a>
+      <div class="nav-item-wrapper">
+        <a href="javascript:void(0)" class="nav-item" onclick="var m=document.getElementById('create-submenu');m.style.display=m.style.display==='flex'?'none':'flex';"><span class="nav-icon"><i class="fa-regular fa-square-plus"></i></span><span class="nav-label">Create</span></a>
+        <div id="create-submenu" class="create-submenu" style="display:none;">
+          <a href="{% url 'create' %}" class="create-submenu-option"><span class="nav-icon"><i class="fa-regular fa-image"></i></span><span class="nav-label">Create Post</span></a>
+          <a href="{% url 'create_reel' %}" class="create-submenu-option"><span class="nav-icon"><i class="fa-regular fa-square-caret-right"></i></span><span class="nav-label">Create Reel</span></a>
+        </div>
+      </div>
+      <a href="{% url 'profile' %}" class="sidebar-profile-mini">
+        <span class="nav-icon">
+          {% if uid.profile_pic %}
+          <img src="{{uid.profile_pic.url}}" alt="Profile">
+          {% else %}
+          <img src="https://i.pravatar.cc/80?img=47" alt="Profile">
+          {% endif %}
+        </span>
+        <span class="nav-label">Profile</span>
+      </a>
+    </div>
+    <div class="sidebar-divider"></div>
+    <div class="nav-bottom">
+      <a href="{% url 'settings' %}" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-gear"></i></span><span class="nav-label">Settings</span></a>
+      <a href="{% url 'logout' %}" class="nav-item logout-btn"><span class="nav-icon"><i class="fa-solid fa-right-from-bracket"></i></span><span class="nav-label">Logout</span></a>
+    </div>
+  </nav>
+
+  <!-- ══ ALL PAGES ══════════════════════════════════ -->
+  <div class="pages-wrapper">
+
+    <!-- ── FOLLOWING PAGE ─────────────────────────────────── -->
+    <div id="following" class="page page-with-panel" style="display:flex;">
+      <main class="follow-list-area">
+        <a href="{% url 'profile' %}" class="back-btn" style="display:flex; width:auto; padding: 0 16px; border-radius: 20px;">
+          <i class="fa-solid fa-arrow-left"></i> &nbsp; Back to Profile
+        </a>
+
+
+        <div class="follow-list-card" style="display:flex; flex-direction:column; gap:12px; padding:12px;">
+
+          <!-- SEARCH BAR -->
+          <form method="GET" action="" style="width:100%; margin-bottom:10px;">
+            <input 
+              type="text" 
+              name="search" 
+              placeholder="Search following..." 
+              value="{{ request.GET.search }}"
+              class="search-input"
+              style="width:100%; padding:14px; border-radius:25px;"
+            >
+          </form>
+
+
+
+          {% for user in users %}
+            <div class="suggest-item">
+              <div class="sug-av">
+                {% if user.profile_pic %}
+                <img src="{{user.profile_pic.url}}">
+                {% else %}
+                <img src="https://i.pravatar.cc/80?img=9">
+                {% endif %}
+              </div>
+              <div class="sug-info">
+                <div class="sug-name">{{user.username}}</div>
+                <div class="sug-note">{{user.fullname|default:"User"}}</div>
+              </div>
+
+              {% if user.id in my_following %}
+                <!-- Already follow kar raha hai - X dikha -->
+                <a href="{% url 'follow_unfollow' pk=user.id %}" class="follow-btn remove-btn">unfollow</a>
+              {% else %}
+                <!-- Follow nahi kiya - Follow button dikha -->
+                <a href="{% url 'follow_unfollow' pk=user.id %}" class="follow-btn">Follow</a>
+              {% endif %}
+
+            </div>
+          {% endfor %}
+
+        </div>
+      </main>
+    </div>
+  </div>
+
+<script>
+  // Fetch dynamic badge counts
+  document.addEventListener('DOMContentLoaded', () => {
+    fetch('/api/unread-counts/', { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+      .then(res => res.json())
+      .then(data => {
+        const msgBadge = document.getElementById('msg-badge');
+        const notifBadge = document.getElementById('notif-badge');
+        
+        if (msgBadge) {
+          if (data.messages > 0) {
+            msgBadge.textContent = data.messages;
+            msgBadge.style.display = 'flex';
+          } else {
+            msgBadge.style.display = 'none';
+          }
+        }
+        
+        if (notifBadge) {
+          if (data.notifications > 0) {
+            notifBadge.textContent = data.notifications;
+            notifBadge.style.display = 'flex';
+          } else {
+            notifBadge.style.display = 'none';
+          }
+        }
+      })
+      .catch(err => console.error('Error fetching badge counts:', err));
+  });
+</script>
+</body>
+
+</html>

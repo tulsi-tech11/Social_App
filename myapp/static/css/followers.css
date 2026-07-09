@@ -1,0 +1,72 @@
+
+    .follow-list-area {
+      flex: 1;
+      max-width: 620px;
+      margin: 0 auto;
+      padding: 26px 22px 70px;
+      overflow-y: auto;
+      height: 100vh;
+    }
+   .follow-list-card {
+    background: var(--bg2);
+    border-radius: var(--r-md);
+    border: 1px solid var(--border);
+    padding: 20px;
+    margin-top: 15px;
+    display: flex;           /* ADD */
+    flex-direction: column;  /* ADD */
+    gap: 10px;              /* ADD */
+  }
+    .follow-page-header {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-family: 'Playfair Display', serif;
+    }
+
+    .action-btns {
+  display: flex;
+  gap: 8px;
+}
+
+/* Follow Back */
+.follow-back {
+  background: #7A9E7E;
+  color: white;
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-size: 12px;
+  text-decoration: none;
+}
+
+/* Remove (X button) */
+.remove-btn {
+  background: transparent;
+  border: 1px solid #ccc;
+  padding: 6px 10px;
+  border-radius: 6px;
+  color: #444;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.action-btns {
+  display: flex;
+  gap: 8px;
+}
+
+.remove-btn {
+  border: 1px solid #ccc;
+  padding: 6px 10px;
+}
+
+.search-input {
+  border: 1px solid #d6cfc7;   
+  background: #eae4dc;        
+  outline: none;
+}

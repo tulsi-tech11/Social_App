@@ -1,0 +1,220 @@
+{% load static %}
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Social — Profile</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Outfit:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="{% static 'css/userpanel.css' %}">
+  <link rel="stylesheet" href="{% static 'css/profile.css' %}">
+</head>
+
+<body>
+
+  <!-- ══ LEFT SIDEBAR ══════════════════════════════ -->
+  <nav class="sidebar">
+    <div class="logo">so<span>cial</span></div>
+    <div class="nav-links">
+      <a href="{% url 'home' %}" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-house"></i></span><span
+          class="nav-label">Home</span></a>
+      <a href="{% url 'search' %}" class="nav-item"><span class="nav-icon"><i
+            class="fa-solid fa-magnifying-glass"></i></span><span class="nav-label">Search</span></a>
+      <a href="{% url 'reels' %}" class="nav-item"><span class="nav-icon"><i class="fa-regular fa-square-caret-right"></i></span><span
+          class="nav-label">Reels</span></a>
+      <a href="{% url 'messages' %}" class="nav-item has-badge"><span class="nav-icon"><i
+            class="fa-solid fa-paper-plane"></i></span><span class="nav-label">Messages</span><span
+          class="badge" id="msg-badge" style="display:none;"></span></a>
+      <a href="{% url 'notification' %}" class="nav-item has-badge"><span class="nav-icon"><i
+            class="fa-solid fa-bell"></i></span><span class="nav-label">Notifications</span><span
+          class="badge red" id="notif-badge" style="display:none;"></span></a>
+      <div class="nav-item-wrapper">
+        <a href="javascript:void(0)" class="nav-item" onclick="var m=document.getElementById('create-submenu');m.style.display=m.style.display==='flex'?'none':'flex';"><span class="nav-icon"><i class="fa-regular fa-square-plus"></i></span><span class="nav-label">Create</span></a>
+        <div id="create-submenu" class="create-submenu" style="display:none;">
+          <a href="{% url 'create' %}" class="create-submenu-option"><span class="nav-icon"><i class="fa-regular fa-image"></i></span><span class="nav-label">Create Post</span></a>
+          <a href="{% url 'create_reel' %}" class="create-submenu-option"><span class="nav-icon"><i class="fa-regular fa-square-caret-right"></i></span><span class="nav-label">Create Reel</span></a>
+        </div>
+      </div>
+      <a href="{% url 'profile' %}" class="sidebar-profile-mini">
+        <span class="nav-icon">
+          {% if uid.profile_pic %}
+          <img src="{{uid.profile_pic.url}}" alt="Profile">
+          {% else %}
+          <img src="https://i.pravatar.cc/80?img=47" alt="Profile">
+          {% endif %}
+        </span>
+        <span class="nav-label">Profile</span>
+      </a>
+    </div>
+    <div class="sidebar-divider"></div>
+    <div class="nav-bottom">
+      <a href="{% url 'settings' %}" class="nav-item"><span class="nav-icon"><i
+            class="fa-solid fa-gear"></i></span><span class="nav-label">Settings</span></a>
+      <a href="{% url 'logout' %}" class="nav-item logout-btn"><span class="nav-icon"><i
+            class="fa-solid fa-right-from-bracket"></i></span><span class="nav-label">Logout</span></a>
+    </div>
+  </nav>
+
+  <!-- ══ ALL PAGES ══════════════════════════════════ -->
+  <div class="pages-wrapper">
+
+    <!-- ── PROFILE ─────────────────────────────────── -->
+    <div id="profile" class="page page-full" style="display:block;">
+      <form method="post">
+        {% csrf_token %}
+        <div class="profile-scroll">
+
+
+
+          <!-- PROFILE BODY -->
+          <div class="profile-body">
+
+            <!-- LEFT: Avatar -->
+            <div class="profile-left">
+              <div class="profile-av-wrap">
+                {% if uid.profile_pic %}
+                <img src="{{uid.profile_pic.url}}" class="profile-av">
+                {% else %}
+                <img src="https://i.pravatar.cc/80?img=47" class="profile-av">
+                {% endif %}
+                <div class="profile-av-online"></div>
+              </div>
+            </div>
+
+            <!-- MIDDLE: Bio + Info -->
+            <div class="profile-middle">
+              <div class="profile-identity">
+                <div class="profile-handle">{{uid.username}}</div>
+                <div class="profile-name">{{uid.fullname}}</div>
+
+                <div class="profile-stats-grid">
+                  <div class="pstat-card">
+                    <span class="pstat-num">{{count_post}}</span>
+                    <span class="pstat-lbl">Posts</span>
+                  </div>
+                  <a href="{% url 'followers' %}" style="text-decoration: none; color: inherit;">
+                    <div class="pstat-card">
+                      <span class="pstat-num">{{count_follower}}</span>
+                      <span class="pstat-lbl">Followers</span>
+                    </div>
+                  </a>
+                  <a href="{% url 'following' %}" style="text-decoration: none; color: inherit;">
+                    <div class="pstat-card">
+                      <span class="pstat-num">{{count_following}}</span>
+                      <span class="pstat-lbl">Following</span>
+                    </div>
+                  </a>
+                </div>
+              </div>
+
+              <div class="profile-bio-text">
+                {{uid.bio}}
+              </div>
+              <div class="profile-meta-row">
+                <span><i class="fa-solid fa-location-dot"></i> Mumbai, India</span>
+                <a href="#" class="profile-link"><i class="fa-solid fa-link"></i> {{uid.link}}</a>
+              </div>
+              <!-- Action buttons -->
+              <div class="profile-action-btns">
+                <a href="{% url 'edit_profile' %}" class="edit-profile-btn"><i class="fa-solid fa-pen"></i> Edit
+                  Profile</a>
+                <button class="share-btn"><i class="fa-solid fa-arrow-up-from-bracket"></i> Share</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- HIGHLIGHTS -->
+          <div class="highlights-section">
+            <div class="highlights-label">Story Highlights</div>
+            <div class="highlights-row">
+              <div class="highlight">
+                <div class="highlight-ring"><img
+                    src="https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?w=120&q=80"></div>
+                <span>dwarka</span>
+              </div>
+              <div class="highlight">
+                <div class="highlight-ring"><img
+                    src="https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=120&q=80"></div>
+                <span>isckon</span>
+              </div>
+              <div class="highlight">
+                <div class="highlight-ring"><img
+                    src="https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=120&q=80"></div>
+                <span>kadakh</span>
+              </div>
+              <div class="highlight">
+                <div class="highlight-ring"><img
+                    src="https://images.unsplash.com/photo-1533104816931-20fa691ff6ca?w=120&q=80"></div>
+                <span>junagadh</span>
+              </div>
+              <div class="highlight">
+                <div class="highlight-ring"><img
+                    src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=120&q=80"></div>
+                <span>Alps</span>
+              </div>
+              <div class="highlight">
+                <div class="highlight-ring"><img
+                    src="https://images.unsplash.com/photo-1543731068-7e0f5beff43a?w=120&q=80"></div><span>Ocean</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- TABS + GRID -->
+          <div class="profile-tabs-wrap">
+            <div class="profile-tabs">
+              <span class="ptab active"><i class="fa-solid fa-border-all"></i> Posts</span>
+              <span class="ptab"><i class="fa-regular fa-square-caret-right"></i> Reels</span>
+              <span class="ptab"><i class="fa-solid fa-tag"></i> Tagged</span>
+            </div>
+          </div>
+
+          <div class="profile-grid">
+
+            {% for post in mypost%}
+              <div class="profile-grid-item"><img
+                  src="{{post.image.url}}">
+                <div class="pgrid-overlay"><i class="fa-solid fa-heart"></i>  &nbsp;<i
+                    class="fa-solid fa-comment"></i> </div>
+              </div>
+            {% endfor %}
+          </div>
+      </form>
+    </div>
+
+  </div><!-- /pages-wrapper -->
+  <script>
+    // Fetch dynamic badge counts
+    document.addEventListener('DOMContentLoaded', () => {
+      fetch('/api/unread-counts/', { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+        .then(res => res.json())
+        .then(data => {
+          const msgBadge = document.getElementById('msg-badge');
+          const notifBadge = document.getElementById('notif-badge');
+          
+          if (msgBadge) {
+            if (data.messages > 0) {
+              msgBadge.textContent = data.messages;
+              msgBadge.style.display = 'flex';
+            } else {
+              msgBadge.style.display = 'none';
+            }
+          }
+          
+          if (notifBadge) {
+            if (data.notifications > 0) {
+              notifBadge.textContent = data.notifications;
+              notifBadge.style.display = 'flex';
+            } else {
+              notifBadge.style.display = 'none';
+            }
+          }
+        })
+        .catch(err => console.error('Error fetching badge counts:', err));
+    });
+  </script>
+</body>
+
+</html>

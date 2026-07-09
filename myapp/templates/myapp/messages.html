@@ -1,0 +1,212 @@
+{% load static %}
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Social — Messages</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Outfit:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="{% static 'css/userpanel.css' %}">
+  <link rel="stylesheet" href="{% static 'css/messages.css' %}">
+</head>
+
+<body>
+
+  <nav class="sidebar">
+    <div class="logo">so<span>cial</span></div>
+    <div class="nav-links">
+      <a href="{% url 'home' %}" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-house"></i></span><span
+          class="nav-label">Home</span></a>
+      <a href="{% url 'search' %}" class="nav-item"><span class="nav-icon"><i
+            class="fa-solid fa-magnifying-glass"></i></span><span class="nav-label">Search</span></a>
+      <a href="{% url 'reels' %}" class="nav-item"><span class="nav-icon"><i class="fa-regular fa-square-caret-right"></i></span><span
+          class="nav-label">Reels</span></a>
+      <a href="{% url 'messages' %}" class="nav-item has-badge"><span class="nav-icon"><i
+            class="fa-solid fa-paper-plane"></i></span><span class="nav-label">Messages</span><span class="badge"
+          id="msg-badge" style="display:none;"></span></a>
+      <a href="{% url 'notification' %}" class="nav-item has-badge"><span class="nav-icon"><i
+            class="fa-solid fa-bell"></i></span><span class="nav-label">Notifications</span><span class="badge red"
+          id="notif-badge" style="display:none;"></span></a>
+      <div class="nav-item-wrapper">
+        <a href="javascript:void(0)" class="nav-item"
+          onclick="var m=document.getElementById('create-submenu');m.style.display=m.style.display==='flex'?'none':'flex';"><span
+            class="nav-icon"><i class="fa-regular fa-square-plus"></i></span><span class="nav-label">Create</span></a>
+        <div id="create-submenu" class="create-submenu" style="display:none;">
+          <a href="{% url 'create' %}" class="create-submenu-option"><span class="nav-icon"><i
+                class="fa-regular fa-image"></i></span><span class="nav-label">Create Post</span></a>
+          <a href="{% url 'create_reel' %}" class="create-submenu-option"><span class="nav-icon"><i
+                class="fa-regular fa-square-caret-right"></i></span><span class="nav-label">Create Reel</span></a>
+        </div>
+      </div>
+      <a href="{% url 'profile' %}" class="sidebar-profile-mini">
+        <span class="nav-icon">
+          {% if uid.profile_pic %}
+          <img src="{{uid.profile_pic.url}}" alt="Profile">
+          {% else %}
+          <img src="https://i.pravatar.cc/80?img=47" alt="Profile">
+          {% endif %}
+        </span>
+        <span class="nav-label">Profile</span>
+      </a>
+    </div>
+    <div class="sidebar-divider"></div>
+    <div class="nav-bottom">
+      <a href="{% url 'settings' %}" class="nav-item"><span class="nav-icon"><i
+            class="fa-solid fa-gear"></i></span><span class="nav-label">Settings</span></a>
+      <a href="{% url 'logout' %}" class="nav-item logout-btn"><span class="nav-icon"><i
+            class="fa-solid fa-right-from-bracket"></i></span><span class="nav-label">Logout</span></a>
+    </div>
+  </nav>
+
+  <div class="pages-wrapper">
+    <div id="messages" class="page page-full" style="display:block;">
+      <div class="messages-layout">
+
+        <div class="inbox-list">
+          <div class="page-header" style="padding:28px 22px 18px"><i class="fa-solid fa-paper-plane"></i> Messages</div>
+
+          <form method="get" action="{% url 'messages' %}">
+            <div class="inbox-search">
+              <div class="search-input-box">
+                <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                <input type="text" placeholder="Search messages…" class="search-input" name="q">
+              </div>
+            </div>
+          </form>
+
+          <div class="convo-list">
+            {% for chat in chat_list %}
+            <a href="{% url 'messages' pk=chat.user.id %}" style="text-decoration: none; color: inherit;">
+              <div class="convo-item {% if receiver and receiver.id == chat.user.id %}active{% endif %}">
+                <div class="convo-av online">
+                  {% if chat.user.profile_pic %}
+                  <img src="{{chat.user.profile_pic.url}}">
+                  {% else %}
+                  <img src="https://i.pravatar.cc/80?img=47">
+                  {% endif %}
+                </div>
+                <div class="convo-body">
+                  <div class="convo-top">
+                    <span class="convo-name" style="{% if chat.unread_count and chat.unread_count > 0 %}font-weight:700; color:var(--text);{% endif %}">{{chat.user.username}}</span>
+                    {% if chat.unread_count and chat.unread_count > 0 %}
+                    <span class="unread-dot" style="width: 10px; height: 10px; background-color: var(--accent); border-radius: 50%; margin-left: auto; flex-shrink: 0; box-shadow: 0 0 8px rgba(196, 149, 106, 0.4);"></span>
+                    {% endif %}
+                  </div>
+                  <div class="convo-preview" style="{% if chat.unread_count and chat.unread_count > 0 %}font-weight:600; color:var(--text);{% else %}color:var(--muted);{% endif %}">{{ chat.last_msg|default:"Click to chat"|truncatechars:35 }}</div>
+                </div>
+              </div>
+            </a>
+            {% endfor %}
+          </div>
+        </div>
+
+        <div class="chat-window">
+          {% if receiver %}
+
+          <div class="chat-header">
+            <a href="{% url 'user_profile' pk=receiver.id %}" style="display: flex; align-items: center; gap: 14px; text-decoration: none; color: inherit;">
+              <div class="convo-av online" style="width:46px;height:46px;flex-shrink:0">
+                {% if receiver.profile_pic %}
+                <img src="{{receiver.profile_pic.url}}">
+                {% else %}
+                <img src="https://i.pravatar.cc/80?img=47">
+                {% endif %}
+              </div>
+              <div>
+                <div class="chat-name">{{receiver.username}}</div>
+                <div class="chat-status">Active now</div>
+              </div>
+            </a>
+          </div>
+
+          <!-- ✅ FIX: loop ek hi container ke andar -->
+
+          <div class="chat-messages">
+
+            {% for message in messages %}
+
+            {% if message.sender_id.id == uid.id %}
+
+            <!-- Sender (Right side) -->
+            <div class="msg-row right">
+              <div class="msg-bubble sender">
+                {{ message.content }}
+              </div>
+            </div>
+
+            {% else %}
+
+            <!-- Receiver (Left side) -->
+            <div class="msg-row left">
+              <div class="msg-bubble receiver">
+                {{ message.content }}
+              </div>
+            </div>
+
+            {% endif %}
+
+            {% endfor %}
+
+          </div>
+
+          <form method="post" action="{% url 'send_msg' pk=receiver.id %}" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="chat-input-row">
+              <input type="text" placeholder="Message…" class="chat-input" name="message" required>
+              <button type="submit" class="send-btn"><i class="fa-solid fa-paper-plane"></i></button>
+            </div>
+          </form>
+
+          {% else %}
+
+          <div
+            style="flex:1; display:flex; align-items:center; justify-content:center; flex-direction:column; color:#888;">
+            <i class="fa-regular fa-comments" style="font-size: 4rem; margin-bottom: 20px; color: #ddd;"></i>
+            <h3>Your Messages</h3>
+            <p>Send private photos and messages to a friend.</p>
+          </div>
+
+          {% endif %}
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+
+  <script>
+    // Fetch dynamic badge counts
+    document.addEventListener('DOMContentLoaded', () => {
+      fetch('/api/unread-counts/', { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+        .then(res => res.json())
+        .then(data => {
+          const msgBadge = document.getElementById('msg-badge');
+          const notifBadge = document.getElementById('notif-badge');
+
+          if (msgBadge) {
+            if (data.messages > 0) {
+              msgBadge.textContent = data.messages;
+              msgBadge.style.display = 'flex';
+            } else {
+              msgBadge.style.display = 'none';
+            }
+          }
+
+          if (notifBadge) {
+            if (data.notifications > 0) {
+              notifBadge.textContent = data.notifications;
+              notifBadge.style.display = 'flex';
+            } else {
+              notifBadge.style.display = 'none';
+            }
+          }
+        })
+        .catch(err => console.error('Error fetching badge counts:', err));
+    });
+  </script>
+</body>
+
+</html>

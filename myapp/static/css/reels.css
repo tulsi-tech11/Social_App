@@ -1,0 +1,201 @@
+body {
+    margin: 0;
+    background-color: #f3eee7; /* Light beige background from screenshot */
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+    font-family: 'Outfit', sans-serif;
+}
+
+/* Sidebar width adjustment if needed */
+.sidebar {
+    width: 250px;
+    background: #fff;
+    border-right: 1px solid #eee;
+    flex-shrink: 0;
+}
+
+.reels-main-content {
+    flex-grow: 1;
+    height: 100vh;
+    overflow-y: scroll;
+    scroll-snap-type: y mandatory;
+    scrollbar-width: none;
+    display: block;
+}
+.reels-main-content::-webkit-scrollbar { display: none; }
+
+.reel-unit {
+    height: 100vh;
+    width: 100%;
+    scroll-snap-align: center;
+    scroll-snap-stop: always;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* The Reel Card */
+.reel-card {
+    height: 88vh;
+    width: auto;
+    aspect-ratio: 9 / 16;
+    background: #000;
+    border-radius: 12px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+}
+
+.reel-card video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.center-controls {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    z-index: 10;
+    pointer-events: none;
+}
+
+.mute-icon-overlay, .play-icon-overlay {
+    background: rgba(0, 0, 0, 0.55);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    opacity: 0;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    transform: scale(0.8);
+}
+
+.mute-icon-overlay {
+    width: 44px;
+    height: 44px;
+    font-size: 16px;
+    pointer-events: auto;
+    cursor: pointer;
+}
+
+.play-icon-overlay {
+    width: 72px;
+    height: 72px;
+    font-size: 26px;
+    padding-left: 4px;
+}
+
+.play-icon-overlay.is-pause {
+    padding-left: 0;
+}
+
+.play-icon-overlay.show, .mute-icon-overlay.show {
+    opacity: 1;
+    transform: scale(1);
+}
+
+/* Inner Overlay for better text visibility */
+.reel-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    top: auto;
+    height: 40%;
+    background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);
+    pointer-events: none;
+}
+
+/* Right Side Actions (Inside the Reel Card) */
+.reel-actions-inner {
+    position: absolute;
+    right: 12px;
+    bottom: 60px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    align-items: center;
+    color: #fff;
+    z-index: 5;
+}
+.action-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    cursor: pointer;
+}
+.action-btn i { font-size: 24px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5)); }
+.action-btn span { font-size: 11px; font-weight: 500; }
+
+/* Bottom Info (Inside the Reel Card) */
+.reel-info-inner {
+    position: absolute;
+    bottom: 20px;
+    left: 15px;
+    right: 60px;
+    color: #fff;
+    z-index: 5;
+}
+.user-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+.user-row img {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 1.5px solid #fff;
+}
+.user-row .username { font-weight: 600; font-size: 14px; }
+.follow-btn-reel {
+    background: transparent;
+    border: 1px solid #fff;
+    color: #fff;
+    padding: 3px 10px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.caption-reel {
+    font-size: 13px;
+    margin-bottom: 10px;
+    opacity: 0.95;
+    line-height: 1.3;
+}
+
+.music-info-reel {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+}
+.music-info-reel i { font-size: 10px; }
+
+.progress-line-reel {
+    margin-top: 8px;
+    height: 2px;
+    background: rgba(255,255,255,0.3);
+    width: 100%;
+    border-radius: 1px;
+}
+.progress-fill-reel {
+    height: 100%;
+    background: #fff;
+    width: 0%;
+}

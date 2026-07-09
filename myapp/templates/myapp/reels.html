@@ -1,0 +1,206 @@
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>social — Reels</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'css/userpanel.css' %}">
+    <link rel="stylesheet" href="{% static 'css/reels.css' %}">
+</head>
+<body>
+
+    <!-- SIDEBAR -->
+    <nav class="sidebar">
+        <div class="logo">so<span>cial</span></div>
+        <div class="nav-links">
+            <a href="{% url 'home' %}" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-house"></i></span><span class="nav-label">Home</span></a>
+            <a href="{% url 'search' %}" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-magnifying-glass"></i></span><span class="nav-label">Search</span></a>
+            <a href="{% url 'reels' %}" class="nav-item active"><span class="nav-icon"><i class="fa-regular fa-square-caret-right"></i></span><span class="nav-label">Reels</span></a>
+            <a href="{% url 'messages' %}" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-paper-plane"></i></span><span class="nav-label">Messages</span></a>
+            <a href="{% url 'notification' %}" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-bell"></i></span><span class="nav-label">Notifications</span></a>
+            <div class="nav-item-wrapper">
+                <a href="javascript:void(0)" class="nav-item" onclick="var m=document.getElementById('create-submenu');m.style.display=m.style.display==='flex'?'none':'flex';"><span class="nav-icon"><i class="fa-regular fa-square-plus"></i></span><span class="nav-label">Create</span></a>
+                <div id="create-submenu" class="create-submenu" style="display:none;">
+                  <a href="{% url 'create' %}" class="create-submenu-option"><span class="nav-icon"><i class="fa-regular fa-image"></i></span><span class="nav-label">Create Post</span></a>
+                  <a href="{% url 'create_reel' %}" class="create-submenu-option"><span class="nav-icon"><i class="fa-regular fa-square-caret-right"></i></span><span class="nav-label">Create Reel</span></a>
+                </div>
+            </div>
+            <a href="{% url 'profile' %}" class="sidebar-profile-mini">
+                <span class="nav-icon">
+                    {% if uid.profile_pic %}
+                    <img src="{{uid.profile_pic.url}}" alt="Profile">
+                    {% else %}
+                    <img src="https://i.pravatar.cc/80?img=1" alt="Profile">
+                    {% endif %}
+                </span>
+                <span class="nav-label">Profile</span>
+            </a>
+        </div>
+        <div class="nav-bottom">
+            <a href="{% url 'settings' %}" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-gear"></i></span><span class="nav-label">Settings</span></a>
+            <a href="{% url 'logout' %}" class="nav-item logout-btn"><span class="nav-icon"><i class="fa-solid fa-right-from-bracket"></i></span><span class="nav-label">Logout</span></a>
+        </div>
+    </nav>
+
+    <!-- REELS CONTENT -->
+    <div class="reels-main-content" id="reelsMain">
+        {% for reel in all_reels %}
+        <div class="reel-unit">
+            <div class="reel-card">
+                <video src="{{reel.video.url}}" class="vid-el" loop playsinline></video>
+                <div class="center-controls">
+                    <div class="mute-icon-overlay"><i class="fa-solid fa-volume-high"></i></div>
+                    <div class="play-icon-overlay"><i class="fa-solid fa-play"></i></div>
+                </div>
+                <div class="reel-overlay"></div>
+
+                <!-- Icons inside -->
+                <div class="reel-actions-inner">
+                    <div class="action-btn"><i class="fa-regular fa-heart"></i><span>124K</span></div>
+                    <div class="action-btn"><i class="fa-regular fa-comment"></i><span>1.2K</span></div>
+                    <div class="action-btn"><i class="fa-regular fa-paper-plane"></i><span>Share</span></div>
+                    <div class="action-btn"><i class="fa-solid fa-ellipsis"></i></div>
+                </div>
+
+                <!-- Info inside -->
+                <div class="reel-info-inner">
+                    <div class="user-row">
+                        {% if reel.user.profile_pic %}
+                        <img src="{{reel.user.profile_pic.url}}" alt="">
+                        {% else %}
+                        <img src="https://i.pravatar.cc/80?img=1" alt="">
+                        {% endif %}
+                        <span class="username">{{reel.user.username}}</span>
+                        <button class="follow-btn-reel">Follow</button>
+                    </div>
+                    <div class="caption-reel">{{reel.caption}}</div>
+                    <div class="music-info-reel">
+                        <i class="fa-solid fa-music"></i>
+                        <span>Original Audio - {{reel.user.username}}</span>
+                    </div>
+                    <div class="progress-line-reel">
+                        <div class="progress-fill-reel"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <script>
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                const video = entry.target.querySelector('video');
+                const fill = entry.target.querySelector('.progress-fill-reel');
+                const playIcon = entry.target.querySelector('.play-icon-overlay');
+                const muteIcon = entry.target.querySelector('.mute-icon-overlay');
+                
+                if (entry.isIntersecting) {
+                    // Pause all other videos
+                    document.querySelectorAll('.vid-el').forEach(vid => {
+                        if (vid !== video) {
+                            vid.pause();
+                            const otherPlay = vid.parentElement.querySelector('.play-icon-overlay');
+                            const otherMute = vid.parentElement.querySelector('.mute-icon-overlay');
+                            if (otherPlay) otherPlay.classList.remove('show');
+                            if (otherMute) otherMute.classList.remove('show');
+                        }
+                    });
+
+                    video.play().catch(e => console.log('Autoplay blocked:', e));
+                    if (playIcon) playIcon.classList.remove('show');
+                    if (muteIcon) muteIcon.classList.remove('show');
+                    
+                    video.ontimeupdate = () => {
+                        if(video.duration){
+                            const pct = (video.currentTime / video.duration) * 100;
+                            if (fill) fill.style.width = pct + '%';
+                        }
+                    };
+                } else {
+                    video.pause();
+                    video.currentTime = 0;
+                    if (fill) fill.style.width = '0%';
+                    if (playIcon) playIcon.classList.remove('show');
+                    if (muteIcon) muteIcon.classList.remove('show');
+                }
+            });
+        }, { threshold: 0.6 });
+
+        document.querySelectorAll('.reel-unit').forEach(unit => {
+            observer.observe(unit);
+            
+            const video = unit.querySelector('video');
+            const playIcon = unit.querySelector('.play-icon-overlay');
+            const muteIcon = unit.querySelector('.mute-icon-overlay');
+            const card = unit.querySelector('.reel-card');
+            let hideTimeout;
+
+            const showControls = (iconType) => {
+                if (iconType === 'play') {
+                    if (playIcon) {
+                        playIcon.innerHTML = '<i class="fa-solid fa-play"></i>';
+                        playIcon.classList.remove('is-pause');
+                    }
+                } else if (iconType === 'pause') {
+                    if (playIcon) {
+                        playIcon.innerHTML = '<i class="fa-solid fa-pause"></i>';
+                        playIcon.classList.add('is-pause');
+                    }
+                }
+                
+                if (muteIcon) {
+                    if (video.muted) {
+                        muteIcon.innerHTML = '<i class="fa-solid fa-volume-xmark"></i>';
+                    } else {
+                        muteIcon.innerHTML = '<i class="fa-solid fa-volume-high"></i>';
+                    }
+                }
+
+                if (playIcon) playIcon.classList.add('show');
+                if (muteIcon) muteIcon.classList.add('show');
+
+                clearTimeout(hideTimeout);
+                hideTimeout = setTimeout(() => {
+                    if (playIcon) playIcon.classList.remove('show');
+                    if (muteIcon) muteIcon.classList.remove('show');
+                }, 1000);
+            };
+
+            if (muteIcon) {
+                muteIcon.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    video.muted = !video.muted;
+                    showControls(video.paused ? 'play' : 'pause');
+                });
+            }
+            
+            if (card) {
+                card.addEventListener('click', (e) => {
+                    // Do not trigger play/pause if clicking on actions/info or mute button
+                    if (e.target.closest('.reel-actions-inner') || e.target.closest('.reel-info-inner') || e.target.closest('.mute-icon-overlay')) {
+                        return;
+                    }
+                    
+                    if (video.paused) {
+                        // Pause all other videos
+                        document.querySelectorAll('.vid-el').forEach(vid => {
+                            if (vid !== video) {
+                                vid.pause();
+                            }
+                        });
+
+                        video.play().catch(e => console.log('Play blocked:', e));
+                        showControls('pause');
+                    } else {
+                        video.pause();
+                        showControls('play');
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>

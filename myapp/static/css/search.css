@@ -1,0 +1,76 @@
+/* ══════════════════════════════════════════════════
+   SEARCH PAGE
+══════════════════════════════════════════════════ */
+.search-bar-wrap  { margin-bottom: 28px; }
+.search-input-box { position: relative; }
+.search-icon {
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+.search-input {
+  width: 100%;
+  padding: 14px 16px 14px 44px;
+  background: var(--bg2);
+  border: 1.5px solid var(--border);
+  border-radius: var(--r-md);
+  font-family: 'Outfit', sans-serif;
+  font-size: 1rem;
+  color: var(--text);
+  outline: none;
+  transition: var(--t);
+}
+.search-input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(196, 149, 106, 0.08);
+}
+
+.search-recents { display: flex; flex-direction: column; gap: 2px; }
+.search-recent-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 11px 14px;
+  border-radius: var(--r-md);
+  transition: var(--t);
+}
+.search-recent-item:hover { background: var(--bg3); }
+.tag-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--bg3);
+  border: 1.5px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--accent);
+  font-size: 0.95rem;
+  flex-shrink: 0;
+}
+.clear-btn {
+  background: none;
+  border: none;
+  color: var(--muted);
+  cursor: pointer;
+  padding: 5px 7px;
+  border-radius: 6px;
+  font-size: 0.82rem;
+  margin-left: auto;
+  transition: var(--t);
+}
+.clear-btn:hover { background: var(--border); color: var(--text); }
+
+/* Alignment Fix */
+#search {
+  align-self: flex-start;
+  min-height: auto;
+}
+#search .page-content {
+  max-width: 620px;
+  margin: 0 auto;
+  width: 100%;
+}
